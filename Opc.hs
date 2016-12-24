@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveDataTypeable #-}
+
 module Opc
   ( Frame (..)
   , Pixel (..)
@@ -8,6 +10,7 @@ import Control.Monad
 import Data.Binary
 import Data.Binary.Put
 import Data.Binary.Get
+import Data.Typeable
 
 data Frame = SetColors
              { fChannel :: !Word8
@@ -24,7 +27,7 @@ data Pixel =
   { pRed   :: !Word8
   , pGreen :: !Word8
   , pBlue  :: !Word8
-  }
+  } deriving (Typeable, Show)
 
 cmdSetColors :: Word8
 cmdSetColors = 0

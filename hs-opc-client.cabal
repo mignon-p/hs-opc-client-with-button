@@ -55,6 +55,7 @@ executable hs-opc-client
 
   -- Modules included in this executable, other than Main.
   other-modules:       Opc
+                     , Patterns
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
@@ -63,7 +64,9 @@ executable hs-opc-client
   build-depends:       base   >= 4.6 && < 5
                      , binary >= 0.7 && < 0.8
                      , bytestring >= 0.10.0.2 && < 0.11
+                     , hourglass >= 0.2.10 && < 0.3
                      , network >= 2.4.2.3 && < 2.7
+                     , random >= 1.0.1.1 && < 1.2
 
   -- Directories containing source files.
   -- hs-source-dirs:
