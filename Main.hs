@@ -16,6 +16,9 @@ import Time.Types
 
 import Opc
 import Patterns
+import WiringPi
+
+buttonPin = 2
 
 nLights = 512                   -- max number of lights on a FadeCandy
 
@@ -54,12 +57,32 @@ runPixels sock pix1 = currentMicros >>= rPix pix1
           sendPixels sock colors
           let goal' = goal + 1000000 `div` framesPerSecond
               (_ , funcs) = unzip pix
-          rPix (zip dyn' funcs) goal'
+          pressed <- buttonPressed
+          unless pressed $ rPix (zip dyn' funcs) goal'
+
+buttonPressed :: IO Bool
+buttonPressed = do
+  button <- digitalRead buttonPin
+  case button of
+    HIGH -> return False
+    LOW -> do
+      buttonWait
+      return True
+  where buttonWait = do
+          threadDelay $ 1000000 `div` 20
+          button <- digitalRead buttonPin
+          when (button == LOW) buttonWait
 
 gen :: StdGen
 gen = mkStdGen 12345
 
 main = do
+  -- set up GPIO for button
+  wiringPiSetup
+  pinMode buttonPin INPUT
+  pullUpDnControl buttonPin PUD_UP
+
+  -- connect to Open Pixel Control server
   ai <- getAddrInfo Nothing (Just "127.0.0.1" {- "localhost" -}) (Just "7890")
   let addr = addrAddress $ head ai
       fam (SockAddrInet {}) = AF_INET
@@ -67,6 +90,17 @@ main = do
       fam sa = error $ "Unexpected socket family: " ++ show sa
   s <- socket (fam addr) Stream defaultProtocol
   connect s addr
-  now <- currentMicros
-  let pix = initBlink nLights gen now 1000000 10000000
-  runPixels s pix
+
+  -- cycle through different patterns as button is pressed
+  forever $ do
+    now1 <- currentMicros
+    let pix1 = initBlink nLights gen now1 1000000 10000000
+    runPixels s pix1
+
+    now2 <- currentMicros
+    let pix2 = initTwinkle nLights gen now2 blue white
+    runPixels s pix2
+
+    now3 <- currentMicros
+    let pix3 = initBlinkTwo nLights gen now3 red green
+    runPixels s pix3
