@@ -13,13 +13,17 @@ name:                hs-opc-client-with-button
 version:             0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis:            Haskell client for OpenPixelControl
+synopsis:            Haskell client for OpenPixelControl with push-button input
 
 -- A longer description of the package.
-description:         A simple example of how to talk to an Open Pixel Control
-                     server from Haskell.  This example client takes a color
-                     name or RGB triple on the command line, and sets all
-                     the lights on the string to that color.
+description:         Controls a string of lights via the
+                     OpenPixelControl protocol.  You can switch
+                     between different light patterns by pressing a
+                     button.  The button should be connected between
+                     GND and GPIO2 on your Raspberry Pi.  Uses the
+                     wiringPi library to talk to the GPIO, so you must
+                     install the wiringPi C library ("sudo apt-get
+                     install wiringpi") before you build this program.
 
 -- The license under which the package is released.
 license:             PublicDomain
