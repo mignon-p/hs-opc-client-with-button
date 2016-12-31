@@ -9,10 +9,9 @@ import Data.Dynamic
 import Data.Word
 import Network.Socket
 import Network.Socket.ByteString
+import System.Clock
 import System.Environment
 import System.Random
-import Time.System
-import Time.Types
 
 import Opc
 import Patterns
@@ -37,9 +36,9 @@ yellow = Pixel 255 255 0
 
 currentMicros :: IO Microseconds
 currentMicros = do
-  now <- timeCurrentP
-  let (ElapsedP (Elapsed (Seconds s)) (NanoSeconds ns)) = now
-  return $ s * 1000000 + ns `div` 1000
+  now <- getTime Monotonic
+  let nanos = toNanoSecs now
+  return $ fromIntegral $ nanos `div` 1000
 
 sendPixels :: Socket -> [Pixel] -> IO ()
 sendPixels sock pix = do
