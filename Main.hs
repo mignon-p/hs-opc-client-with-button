@@ -11,13 +11,13 @@ import Network.Socket
 import Network.Socket.ByteString
 import System.Clock
 import System.Environment
+import System.Hardware.WiringPi
 import System.Random
 
 import Opc
 import Patterns
-import WiringPi
 
-buttonPin = 2
+buttonPin = Wpi 2
 
 nLights = 512                   -- max number of lights on a FadeCandy
 
@@ -77,7 +77,6 @@ gen = mkStdGen 12345
 
 main = do
   -- set up GPIO for button
-  wiringPiSetup
   pinMode buttonPin INPUT
   pullUpDnControl buttonPin PUD_UP
 
